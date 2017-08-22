@@ -79,7 +79,7 @@ class GetExamples extends UnitSpec with ScalaFutures with IntegrationPatience wi
 
       myHttpClient.GET[Option[BankHolidays]]("http://localhost:20001/400.json").recover {
         case e: BadRequestException => // handle here a bad request
-      }
+      }.futureValue
     }
 
     "throw an Upstream4xxResponse for 4xx errors" in {
@@ -89,7 +89,7 @@ class GetExamples extends UnitSpec with ScalaFutures with IntegrationPatience wi
 
       myHttpClient.GET[Option[BankHolidays]]("http://localhost:20001/401.json").recover {
         case e: Upstream4xxResponse => // handle here a 4xx errors
-      }
+      }.futureValue
     }
 
     "throw an Upstream5xxResponse for 4xx errors" in {
@@ -99,7 +99,7 @@ class GetExamples extends UnitSpec with ScalaFutures with IntegrationPatience wi
 
       myHttpClient.GET[Option[BankHolidays]]("http://localhost:20001/500.json").recover {
         case e: Upstream5xxResponse => // handle here a 5xx errors
-      }
+      }.futureValue
     }
   }
 }
