@@ -101,15 +101,5 @@ class GetExamples extends UnitSpec with ScalaFutures with IntegrationPatience wi
         case e: Upstream5xxResponse => // handle here a 5xx errors
       }
     }
-
-    "allow to override the default exception handling" in {
-
-      stubFor(get("/500.json")
-        .willReturn(serverError))
-
-      myHttpClient.GET[Option[BankHolidays]]("http://localhost:20001/500.json").recover {
-        case e: Upstream5xxResponse => // handle here a 5xx errors
-      }
-    }
   }
 }
