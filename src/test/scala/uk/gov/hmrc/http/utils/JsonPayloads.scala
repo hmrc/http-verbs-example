@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 object JsonPayloads {
 
   val bankHolidays = IOUtils.toString(getClass.getClassLoader.getResourceAsStream("bankHolidays.json"), "UTF-8")
-
+  val userId = IOUtils.toString(getClass.getClassLoader.getResourceAsStream("userId.json"), "UTF-8")
 }
 
 
@@ -34,4 +34,17 @@ object BankHolidays {
 
   implicit val bhr = Json.reads[BankHoliday]
   val reads = Json.reads[BankHolidays]
+}
+
+
+case class User(email: String, fullName: String)
+
+object User {
+  val writes = Json.writes[User]
+}
+
+case class UserIdentifier(id: String)
+
+object UserIdentifier {
+  val reads = Json.reads[UserIdentifier]
 }
