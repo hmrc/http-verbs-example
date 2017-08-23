@@ -19,24 +19,19 @@ package uk.gov.hmrc.http
 import com.typesafe.config.Config
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.hooks.HttpHook
-import uk.gov.hmrc.http.utils.StandaloneWSClient
 import uk.gov.hmrc.play.http.ws._
 
-class MyHttpClient extends HttpGet with WSGet
+class MyHttpClient(config: Option[Config], client: WSClient) extends HttpGet with WSGet
     with HttpPut with WSPut
     with HttpDelete with WSDelete
     with HttpPost with WSPost
     with HttpPatch with WSPatch {
 
-  // Add your hooks here. For example an auditing hook
+  // Extend this class to add your hooks. For example an auditing hook
   override val hooks: Seq[HttpHook] = Seq.empty
 
-  // If you are using Dependency Injection, you can provide your application configuration here.
-  // I'm providing no additional configuration as it is not relevant for this test, do not copy this line
-  override lazy val configuration: Option[Config] = None
+  override lazy val configuration: Option[Config] = config
 
-  // If you are using Dependency Injection, you can provide the WS client here.
-  // I'm using StandaloneWSClient.client for testing purposes, do not copy this line
-  override lazy val wsClient: WSClient = StandaloneWSClient.client
+  override lazy val wsClient: WSClient = client
 
 }
