@@ -1,7 +1,7 @@
 
 # http-verbs-example
 
-Since http-verbs 8.0.0, the verbs business logic has been refactored to remove dependencies to Play.  
+Since http-verbs 7.0.0, the verbs business logic has been refactored to remove dependencies to Play.  
 This will allow easier maintenance, upgrades and improvements.  
 Play is now just used as an implementation of the transport layer [defined here](https://github.com/hmrc/http-core/blob/master/src/main/scala/uk/gov/hmrc/http/HttpTransport.scala)
 
