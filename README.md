@@ -64,7 +64,7 @@ val response: Future[Option[DelegationData]] = client.GET[HttpResponse]("http://
 
 The above logic can be encapsulated using an HttpReads[T], which can be definted implicitly and will be used by http-verbs when making a request of type T:
 
-```
+```scala
   val responseHandler = new HttpReads[Option[DelegationData]] {
     override def read(method: String, url: String, response: HttpResponse): Option[DelegationData] = {
       response.status match {
