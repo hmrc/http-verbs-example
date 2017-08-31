@@ -65,22 +65,22 @@ val response: Future[Option[DelegationData]] = client.GET[HttpResponse]("http://
 The above logic can be encapsulated using an HttpReads[T], which can be definted implicitly and will be used by http-verbs when making a request of type T:
 
 ```scala
-  val responseHandler = new HttpReads[Option[DelegationData]] {
-    override def read(method: String, url: String, response: HttpResponse): Option[DelegationData] = {
-      response.status match {
-        case 200 => Try(response.json.as[DelegationData]) match {
-          case Success(data) => Some(data)
-          case Failure(e) => throw new RuntimeException("Unable to parse response", method, url, e)
-        }
-        case 404 => None
-        case unexpectedStatus => throw  new RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
-      }
-    }
-  }
+val responseHandler = new HttpReads[Option[DelegationData]] {
+ override def read(method: String, url: String, response: HttpResponse): Option[DelegationData] = {
+   response.status match {
+     case 200 => Try(response.json.as[DelegationData]) match {
+       case Success(data) => Some(data)
+       case Failure(e) => throw new RuntimeException("Unable to parse response", method, url, e)
+     }
+     case 404 => None
+     case unexpectedStatus => throw  new RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
+   }
+ }
+}
 
-  def getDelegationData(oid: String, responseHandler: HttpReads[Option[DelegationData]] = responseHandler)(implicit hc: HeaderCarrier): Future[Option[DelegationData]] = {
-    http.GET[Option[DelegationData]](delegationUrl(oid))
-  }
+def getDelegationData(oid: String, responseHandler: HttpReads[Option[DelegationData]] = responseHandler)(implicit hc: HeaderCarrier): Future[Option[DelegationData]] = {
+ http.GET[Option[DelegationData]](delegationUrl(oid))
+}
 ```
 
 For more detailed examples have a look at [this tests](https://github.com/hmrc/http-verbs-example/blob/master/src/test/scala/uk/gov/hmrc/http)
