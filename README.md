@@ -35,12 +35,6 @@ A more comprehensive example [can be found here](https://github.com/hmrc/http-ve
 
 ## Make a call
 
-The most generic way to use the verbs is to ask for an HttpResponse in return.  
-This should be used when something different than JSON is returned by the called endpoint:
-```scala
-val response: Future[HttpResponse] = client.GET[HttpResponse]("http://localhost/bank-holidays.html")
-```
-
 The most common way to use the verbs is when the called endpoint returns JSON.  
 The client can deserialise the response into a case class. For example:
 ```scala
@@ -51,6 +45,21 @@ Sometimes an API can return 404, as a valid return status.
 In this case, to avoid a NotFoundException, wrap your case class in an Option. If 404 is returned, the response will be None.
 ```scala
 val response: Future[Option[Something]] = client.GET[Option[Something]]("http://localhost/404.json")
+```
+
+The most generic way to use the verbs is to ask for an HttpResponse in return. This special case class allows access to the raw details of the request, including content and status code:
+```scala
+val response: Future[HttpResponse] = client.GET[HttpResponse]("http://localhost/bank-holidays.html") map {
+   response => 
+      response.status match {
+        case 200 => Try(response.json.as[DelegationData]) match {
+          case Success(data) => Some(data)
+          case Failure(e) => throw new RuntimeException("Unable to parse response", method, url, e)
+        }
+        case 404 => None
+        case unexpectedStatus => throw RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
+      }
+}
 ```
 
 For more detailed examples have a look at [this tests](https://github.com/hmrc/http-verbs-example/blob/master/src/test/scala/uk/gov/hmrc/http)
