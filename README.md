@@ -54,10 +54,10 @@ val response: Future[Option[DelegationData]] = client.GET[HttpResponse]("http://
       response.status match {
         case 200 => Try(response.json.as[DelegationData]) match {
           case Success(data) => Some(data)
-          case Failure(e) => throw new RuntimeException("Unable to parse response", method, url, e)
+          case Failure(e) => throw new RuntimeException("Unable to parse response")
         }
         case 404 => None
-        case unexpectedStatus => throw RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
+        case unexpectedStatus => throw new RuntimeException(s"Unexpected response code '$unexpectedStatus'")
       }
 }
 ```
@@ -70,10 +70,10 @@ val responseHandler = new HttpReads[Option[DelegationData]] {
    response.status match {
      case 200 => Try(response.json.as[DelegationData]) match {
        case Success(data) => Some(data)
-       case Failure(e) => throw new RuntimeException("Unable to parse response", method, url, e)
+       case Failure(e) => throw new RuntimeException("Unable to parse response")
      }
      case 404 => None
-     case unexpectedStatus => throw new RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
+     case unexpectedStatus => throw new RuntimeException(s"Unexpected response code '$unexpectedStatus'")
    }
  }
 }
