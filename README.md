@@ -49,7 +49,7 @@ val response: Future[Option[Something]] = client.GET[Option[Something]]("http://
 
 The most generic way to use the verbs is to ask for an HttpResponse in return. This special case class allows access to the raw details of the request, including content and status code:
 ```scala
-val response: Future[HttpResponse] = client.GET[HttpResponse]("http://localhost/bank-holidays.html") map {
+val response: Future[Option[DelegationData]] = client.GET[HttpResponse]("http://localhost/bank-holidays.html") map {
    response => 
       response.status match {
         case 200 => Try(response.json.as[DelegationData]) match {
