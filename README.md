@@ -73,7 +73,7 @@ val responseHandler = new HttpReads[Option[DelegationData]] {
        case Failure(e) => throw new RuntimeException("Unable to parse response", method, url, e)
      }
      case 404 => None
-     case unexpectedStatus => throw  new RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
+     case unexpectedStatus => throw new RuntimeException(s"Unexpected response code '$unexpectedStatus'", method, url)
    }
  }
 }
