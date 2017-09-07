@@ -89,7 +89,7 @@ For more detailed examples have a look at [this tests](https://github.com/hmrc/h
 
 ### Default Error Handling
 
-By default, HttpVerbs is opinionated in the way it handles response codes. Any status code other than a 200 will cause an exception to be thrown. 400 and 404 have their own specific exceptions. See below logic for more details
+By default, HttpVerbs is opinionated in the way it handles response codes. Any status code other than a 2xx will cause an exception to be thrown. 400 and 404 have their own specific exceptions. See below logic for more details
 
 ```scala
 case status if is2xx(status) => response
