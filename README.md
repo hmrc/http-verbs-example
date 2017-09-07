@@ -87,6 +87,19 @@ def getDelegationData(oid: String, responseHandler: HttpReads[Option[DelegationD
 
 For more detailed examples have a look at [this tests](https://github.com/hmrc/http-verbs-example/blob/master/src/test/scala/uk/gov/hmrc/http)
 
+### Default Error Handling
+
+By default, HttpVerbs is opinionated in the way it handles response codes. Any status code other than a 200 will cause an exception to be thrown. 400 and 404 have their own specific exceptions. See below logic for more details
+
+```scala
+case status if is2xx(status) => response
+case 400 => throw new BadRequestException(badRequestMessage(httpMethod, url, response.body))
+case 404 => throw new NotFoundException(notFoundMessage(httpMethod, url, response.body))
+case status if is4xx(status) => throw new Upstream4xxResponse(upstreamResponseMessage(httpMethod, url, status, response.body), status, 500, response.allHeaders)
+case status if is5xx(status) => throw new Upstream5xxResponse(upstreamResponseMessage(httpMethod, url, status, response.body), status, 502)
+case status => throw new Exception(s"$httpMethod to $url failed with status $status. Response body: '${response.body}'")
+```
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
