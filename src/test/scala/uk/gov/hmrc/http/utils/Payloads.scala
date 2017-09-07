@@ -20,22 +20,22 @@ import org.apache.commons.io.IOUtils
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
 
-object JsonPayloads {
+object XmlPayloads {
+  val bankHolidays = IOUtils.toString(getClass.getClassLoader.getResourceAsStream("bankHolidays.xml"), "UTF-8")
+}
 
+object JsonPayloads {
   val bankHolidays = IOUtils.toString(getClass.getClassLoader.getResourceAsStream("bankHolidays.json"), "UTF-8")
   val userId = IOUtils.toString(getClass.getClassLoader.getResourceAsStream("userId.json"), "UTF-8")
 }
-
 
 case class BankHolidays(events: Seq[BankHoliday])
 case class BankHoliday(title: String, date: LocalDate)
 
 object BankHolidays {
-
   implicit val bhr = Json.reads[BankHoliday]
   val reads = Json.reads[BankHolidays]
 }
-
 
 case class User(email: String, fullName: String)
 

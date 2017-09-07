@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class PostExamples extends UnitSpec with ScalaFutures with IntegrationPatience with WiremockTestServer {
 
-  val myHttpClient = new MyHttpClient
+  val myHttpClient = new MyHttpClient(None, StandaloneWSClient.client)
 
   "A POST" should {
 
