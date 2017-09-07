@@ -47,7 +47,7 @@ In this case, to avoid a NotFoundException, wrap your case class in an Option. I
 val response: Future[Option[Something]] = client.GET[Option[Something]]("http://localhost/404.json")
 ```
 
-If you need more control over how your body is deserialsed, you can ask for an HttpResponse in return. This special case class allows access to the raw details of the request, including content and status code:
+If you need more control over how your body is deserialsed, you can ask for an HttpResponse in return. This special case class allows access to the raw details of the request, including content and status code. Please note, this will still be subject to the default error handling provided by HttpVerbs.
 ```scala
 def fromXml(xml: String): BankHolidays =
   BankHolidays((XML.loadString(xml) \ "event") map { event => {
@@ -64,7 +64,7 @@ val response: Future[BankHolidays] = client.GET[HttpResponse]("http://localhost/
 }
 ```
 
-The above logic can be encapsulated using an HttpReads[T], which can be definted implicitly and will be used by http-verbs when making a request of type T:
+If you want full control over your response, including how status codes are mapped to errors you can implement an HttpReads[T]. This can be defined implicitly and will be used by http-verbs when making a request of type T:
 
 ```scala
 val responseHandler = new HttpReads[Option[DelegationData]] {
