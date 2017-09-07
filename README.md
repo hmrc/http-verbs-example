@@ -47,18 +47,20 @@ In this case, to avoid a NotFoundException, wrap your case class in an Option. I
 val response: Future[Option[Something]] = client.GET[Option[Something]]("http://localhost/404.json")
 ```
 
-The most generic way to use the verbs is to ask for an HttpResponse in return. This special case class allows access to the raw details of the request, including content and status code:
+If you need more control over how your body is deserialsed, you can ask for an HttpResponse in return. This special case class allows access to the raw details of the request, including content and status code:
 ```scala
-val response: Future[Option[DelegationData]] = client.GET[HttpResponse]("http://localhost/bank-holidays.html") map {
-   response => 
-      response.status match {
-        case 200 => Try(response.json.as[DelegationData]) match {
-          case Success(data) => Some(data)
-          case Failure(e) => throw new RuntimeException("Unable to parse response")
-        }
-        case 404 => None
-        case unexpectedStatus => throw new RuntimeException(s"Unexpected response code '$unexpectedStatus'")
-      }
+def fromXml(xml: String): BankHolidays =
+  BankHolidays((XML.loadString(xml) \ "event") map { event => {
+    BankHoliday((event \ "title").text, LocalDate.parse((event \ "date").text)) }})
+
+val response: Future[BankHolidays] = client.GET[HttpResponse]("http://localhost/bank-holidays.xml").map { response =>
+  response.status match {
+    case 200 => Try(fromXml(response.body)) match {
+      case Success(data) => Some(data)
+      case Failure(e) =>
+        throw new CustomException("Unable to parse response")
+    }
+  }
 }
 ```
 
