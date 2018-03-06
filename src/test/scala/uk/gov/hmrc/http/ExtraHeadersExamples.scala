@@ -25,6 +25,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 
 class ExtraHeadersExamples extends UnitSpec with ScalaFutures with IntegrationPatience with WiremockTestServer {
+  implicit val uw = User.writes
+  implicit val uir = UserIdentifier.reads
 
   val myHttpClient = new MyHttpClient(None, StandaloneWSClient.client) {
 
@@ -37,7 +39,7 @@ class ExtraHeadersExamples extends UnitSpec with ScalaFutures with IntegrationPa
     import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
     implicit val reads = BankHolidays.reads
 
-    "allow the user to set additional headers" in {
+    "allow the user to set additional headers using the header carrier" in {
 
       implicit val hc = HeaderCarrier(otherHeaders = Seq("some-header" -> "header value"))
 
@@ -51,11 +53,11 @@ class ExtraHeadersExamples extends UnitSpec with ScalaFutures with IntegrationPa
 
     }
 
-    "allow the use to set an authorization header" in {
+    "allow the use to set an authorization header using the header carrier" in {
 
       val username = "user"
       val password = "123"
-      val encodedAuthHeader = Base64.encodeBase64String(s"$username:$password".getBytes())
+      val encodedAuthHeader = Base64.encodeBase64String(s"$username:$password".getBytes("UTF-8"))
       implicit val hc = HeaderCarrier(authorization = Some(Authorization(s"Basic $encodedAuthHeader")))
 
       stubFor(get("/bank-holidays.json")
@@ -64,6 +66,40 @@ class ExtraHeadersExamples extends UnitSpec with ScalaFutures with IntegrationPa
       myHttpClient.GET[BankHolidays]("http://localhost:20001/bank-holidays.json").futureValue
 
       verify(getRequestedFor(urlEqualTo("/bank-holidays.json"))
+        .withHeader("Authorization", equalTo("Basic dXNlcjoxMjM=")))
+
+    }
+
+    "allow the user to set additional headers as part of the POST" in {
+
+      implicit val hc = HeaderCarrier()
+
+      stubFor(post("/create-user")
+        .willReturn(ok(JsonPayloads.bankHolidays)))
+
+      val user = User("me@mail.com", "John Smith")
+
+      myHttpClient.POST[User, HttpResponse]("http://localhost:20001/create-user", user,
+        headers = Seq("some-header" -> "header value")).futureValue
+
+      verify(postRequestedFor(urlEqualTo("/create-user"))
+        .withHeader("some-header", equalTo("header value")))
+
+    }
+
+    "allow the use to set an authorization header as part of a header in the POST and override the Authorization header in the headerCarrier" in {
+
+      implicit val hc = HeaderCarrier(authorization = None)
+
+      stubFor(post("/create-user")
+        .willReturn(ok(JsonPayloads.bankHolidays)))
+
+      val user = User("me@mail.com", "John Smith")
+
+      myHttpClient.POST[User, HttpResponse]("http://localhost:20001/create-user", user,
+        headers = Seq("Authorization" -> "Basic dXNlcjoxMjM=")).futureValue
+
+      verify(postRequestedFor(urlEqualTo("/create-user"))
         .withHeader("Authorization", equalTo("Basic dXNlcjoxMjM=")))
 
     }
