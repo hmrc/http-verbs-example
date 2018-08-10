@@ -46,8 +46,8 @@ private object AppDependencies {
     "com.typesafe.play" %% "play-ws" % playVersion,
     "com.typesafe.play" %% "play-json" % playVersion,
     "uk.gov.hmrc" %% "time" % "2.0.0",
-    "uk.gov.hmrc" %% "http-verbs" % "7.1.0",
-    "uk.gov.hmrc" %% "http-verbs-play-25" % "0.8.0"
+    "uk.gov.hmrc" %% "http-verbs" % "8.4.0-SNAPSHOT",
+    "uk.gov.hmrc" %% "http-verbs-play-25" % "0.10.0-0-g0000000"
   )
 
 

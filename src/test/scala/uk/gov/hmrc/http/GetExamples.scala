@@ -19,9 +19,10 @@ package uk.gov.hmrc.http
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import uk.gov.hmrc.http.utils._
-import uk.gov.hmrc.play.test.UnitSpec
 
+import uk.gov.hmrc.http.utils._
+import uk.gov.hmrc.play.JsonHttpFormats._
+import uk.gov.hmrc.play.test.UnitSpec
 
 class GetExamples extends UnitSpec with ScalaFutures with IntegrationPatience with WiremockTestServer {
 

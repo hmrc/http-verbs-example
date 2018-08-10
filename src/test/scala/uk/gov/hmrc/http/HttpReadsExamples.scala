@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import uk.gov.hmrc.http.utils._
+import uk.gov.hmrc.play.http.ws.WSHttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.util.{Failure, Success, Try}
@@ -37,7 +38,7 @@ class HttpReadsExamples extends UnitSpec with ScalaFutures with IntegrationPatie
   implicit val responseHandler = new HttpReads[Option[BankHolidays]] {
     override def read(method: String, url: String, response: HttpResponse): Option[BankHolidays] = {
       response.status match {
-        case 200 => Try(response.json.as[BankHolidays]) match {
+        case 200 => Try(response.asInstanceOf[WSHttpResponse].json.as[BankHolidays]) match {
           case Success(data) => Some(data)
           case Failure(e) => throw new CustomException("Unable to parse response")
         }

@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import uk.gov.hmrc.http.utils._
 import uk.gov.hmrc.play.test.UnitSpec
-
+import uk.gov.hmrc.play.JsonHttpFormats._
 
 class PostExamples extends UnitSpec with ScalaFutures with IntegrationPatience with WiremockTestServer {
 
